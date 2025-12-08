@@ -1,5 +1,5 @@
 {
-  "name": "Export USPS EDDM® Routes",
+  "name": "(Elit): Export USPS EDDM® Routes",
   "description": "Export USPS EDDM® routes into a .csv file or quickly copy routes directly into your system's clipboard.",
   "version": "0.2.1",
   "manifest_version": 3,
@@ -10,13 +10,13 @@
   "icons": {
     "128": "icons/icon-128.png"
   },
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
+  "background": { "service_worker": "service-worker.js", "type": "module" },
   "host_permissions": ["https://eddm.usps.com/eddm/select-routes.htm*"],
   "content_scripts": [
     {
       "matches": ["https://eddm.usps.com/eddm/select-routes.htm*"],
-      "js": ["content_script.bundle.js"],
-      "run_at": "document_idle"
+      "js": ["content/content-script.js"]
     }
   ]
 }
