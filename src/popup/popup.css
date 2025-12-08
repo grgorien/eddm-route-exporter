@@ -1,0 +1,201 @@
+:root {
+  --cl-blue: hsl(240, 33%, 30%);
+  color-scheme: light dark;
+}
+
+:root:has(option[value="system"]:checked) {
+  color-scheme: light dark;
+}
+
+:root:has(option[value="light"]:checked) {
+  color-scheme: light;
+}
+
+:root:has(option[value="dark"]:checked) {
+  color-scheme: dark;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+body {
+  line-height: 1.6;
+  min-height: 100vh;
+  font-family: "HelveticaNeueW02-75Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+img, picture, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+input, textarea, button, select {
+  font: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+  color: light-dark(var(--cl-blue), white);
+  margin: 0 0 0.25em;
+  line-height: 1;
+}
+
+p, li, figcaption {
+  text-wrap: pretty;
+  max-width: 65ch;
+}
+
+.popup-content {
+  width: 24rem;       
+  padding: 0.33rem;
+  height: auto;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  container-type: inline-size;
+}
+
+h1 {
+  font-size: 1.8rem;                  
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.4rem;                  
+  margin-left: .33rem;
+}
+
+p {
+  color: light-dark(var(--cl-blue), white);
+  font-size: 1.125rem;
+  margin-left: .33rem;
+}
+
+.group-action {
+  padding-top: .33rem;
+  display: flex;
+  flex-direction: column;
+  gap: .33rem;
+  border-radius: 2px;
+  border: 1px solid #999999;
+}
+
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.33rem;
+}
+
+.button-grid > * {
+  min-width: fit-content;
+  flex: 1;
+}
+
+[class="btn"] {
+  border: 1px solid var(--cl-blue);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.70rem 0.33rem;             
+  border-radius: 4px;
+  background-color: light-dark(var(--cl-blue), var(--cl-blue));
+  color: #fff;
+  font-size: 0.777rem;                 
+  font-weight: 600;
+  transition: background 0.12s ease;
+  text-wrap: balance;
+  font-size: 0.96rem;
+
+}
+
+[class="btn"]:hover {
+  background: #ffffff;            
+  color: var(--cl-blue);
+}
+
+[class="btn"]:focus-visible {
+  outline: 2px solid red;
+  outline-offset: 2px;
+}
+
+.auto-select-box {
+  display: flex;
+  flex-direction: column;
+  gap: .33rem;
+}
+
+.auto-select-action button {
+  width: 30%
+}
+
+.auto-select-box textarea {
+  width: 100%;
+  field-sizing: content;
+  min-height: 3rem;
+  resize: none;
+  padding: .50rem;
+}
+
+.auto-select-content-box {
+  display: flex;
+  gap: 0.33rem;
+}
+
+.auto-select-content {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid light-dark(var(--cl-blue), #999999);
+  padding: .33rem;
+}
+
+.auto-select-content > span {
+  margin-left: .33rem;
+  margin-right: .33rem;
+}
+
+.auto-select-action > p { 
+  align-self: center;
+  margin: 0;
+}
+.auto-select-action {
+  display: flex;
+  gap: 12px;
+}
+
+.status-box {
+  border: 1px solid #999999;           
+  padding-top: .33rem;
+}
+
+.status-message {
+  border-radius: 2px;
+  padding: 0.33rem;
+  font-size: 1.125rem;
+  min-height: 2rem;
+}
+
+#theme-handler {
+  padding: 0.33rem;
+  display: flex;
+  justify-content: right;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cl-blue: hsl(240, 33%, 30%);
+  }
+}
