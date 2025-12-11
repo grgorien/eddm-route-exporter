@@ -4,6 +4,10 @@
 
 # Chrome Extension for Exporting USPS EDDM® Routes  
 
+<a href="https://chromewebstore.google.com/detail/export-usps-eddm%C2%AE-routes/kofcpiffckfbmgilgclcipcifialknln?pli=1" target="_blank">
+    <img src="https://raw.githubusercontent.com/tohlex/eddm-route-exporter/refs/heads/elit/media/available-on-chrome-extension-icon.png" alt="available on chrome extesion icon" width="250" />
+</a>
+
 ## Purpose:
 Saves you time by being able to export route data into a .csv file or quickly copy route data into your system's clipboard.
 
