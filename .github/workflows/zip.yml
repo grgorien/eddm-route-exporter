@@ -1,4 +1,4 @@
-name: Build and upload Chrome extension as .zip to GitHub Release
+name: Build and zip extension for a GitHub Release
 
 on:
   release:
@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js 
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
@@ -25,24 +25,22 @@ jobs:
       - name: Build extension
         run: npm run build
 
-      - name: Check dist/ contents success
+      - name: Check for manifest.json
         run: |
-          if [ ! -f dist/manifest.json ]; then
-            echo "Build failed: dist/manifest.json not found."
+          if [! -f dist/chrome-mv3/manifest.json ]; then
+            echo "Build failed: dist/chrome-mv3 not found."
             exit 1
           fi
 
-      - name: Get version from manifest.json and store to GitHub env
+      - name: Get version from manifest.json then store as Github env
         run: |
-          VERSION=$(jq -r '.version' dist/manifest.json)
+          VERSION=$(jq -r ".version" dist/chrome-mv3/manifest.json)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Zip extension with version number
-        run: |
-          cd dist
-          zip -r ../export-eddm-routes-v${{ env.VERSION }}.zip .
+      - name: wxt ZIP extension with version
+        run: npm run zip
 
       - name: Upload zip to release
         uses: softprops/action-gh-release@v2
         with:
-          files: export-eddm-routes-v${{ env.VERSION }}.zip
+          files: export-usps-eddm-routes-${{ env.VERSION }}-chrome.zip
