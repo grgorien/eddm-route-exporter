@@ -1,24 +1,21 @@
 {
-  "name": "export-eddm-routes",
-  "version": "0.2.0",
-  "description": "Saves you time by exporting route data from eddm.usps.com into a csv format.",
-  "main": "main.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "name": "Export USPS EDDM® Routes",
+  "description": "Export USPS EDDM® routes into a .csv file or quickly copy routes directly into your system's clipboard.",
+  "private": true,
+  "version": "0.2.1",
+  "type": "module",
   "scripts": {
-    "dev": "webpack --mode=development --watch",
-    "build": "webpack --mode=production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "copy-webpack-plugin": "^13.0.0",
-    "css-loader": "^7.1.2",
-    "mini-css-extract-plugin": "^2.9.2",
-    "webpack": "^5.99.5",
-    "webpack-cli": "^6.0.1"
+    "typescript": "^5.9.2",
+    "wxt": "^0.20.6"
   }
 }
