@@ -1,23 +1,27 @@
 *
-
 # allow for needs
 !/.gitignore
+!/.github/workflows/zip.yml
 !/package.json
 !/package-lock.json
 !/manifest.json
 !/README.md
+!/src/
 
 # allow for only these extensions
 !*.js
+!*.ts
 !*.json
 !*.html
 !*.css
 !*.png
+!*.svg
 
 # allow subdirectories
 !*/
-# because of ^ -> redo
+
+# disallow
 node_modules/
 dist/
-build/
-coverage/
+migrate/
+
