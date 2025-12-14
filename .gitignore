@@ -21,6 +21,7 @@
 !*/
 
 # disallow
+.wxt
 node_modules/
 dist/
 migrate/
