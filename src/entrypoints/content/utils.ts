@@ -10,7 +10,6 @@ export function getRowsToExport(setting: ExportSetting): HTMLTableRowElement[] {
     throw new Error("Table not found. Try reloading the page.");
   }
   const allRows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>(ROW_SELECTOR));
-  console.log(allRows);
   if (allRows.length === 0) {
     throw new Error("Now rows found in the table. Try to search routes again.");
   }
@@ -35,40 +34,40 @@ export function extractDataFromRows(rows: HTMLTableRowElement[]): string[][] {
     return [];
   }
   const headerCells = Array.from(table.querySelectorAll("thead th")) as HTMLTableCellElement[];
-  const validIndices: number[] = [];
-  const headers = headerCells.map((th, index) => {
+  const headers = headerCells
+  .filter((th, index) => {
+    if (index === 0) {
+      return false;
+    }
     if (th.style.display === "none") {
-      // handling for business routes exclusion
-      return null;
+      return false;
     }
-    const text = th.innerHTML.trim();
-    if (!text) {
-      return null;
-    }
-
-    validIndices.push(index);
-    return text;
-  }).filter((text): text is string => text != null);
-
+    return !!th.textContent?.trim();
+  })
+  .map(th => {
+    return th.textContent?.trim() || "Unknown";
+  });
   const result: string[][] = [headers];
   rows.forEach(row => {
-    const cells = row.querySelectorAll("td");
-    const rowData = validIndices.map(index => {
-      const cell = cells[index];
-      return cell ? cell.innerHTML.trim() : "";
-    });
-    result.push(rowData);
+    const cells = Array.from(row.querySelectorAll("td"));
+    if (cells.length > 1) {
+      const rowData = cells
+      .slice(1, 1 + headers.length)
+      .map(cell => cell.textContent?.trim() || "");
+      result.push(rowData);
+    }
   });
   return result;
 }
 
 export function convertToCSV(data: string[][]): string {
-  return data.map(row => {
+  return data.map(row =>
     row.map(cell => {
-      if (/["\n,]/.test(cell)) {
-        return `"${cell.replace(/"/g, '""')}"`;
+      const cellText = cell.replace(/"/g, '""');
+      if (cellText.includes(',') || cellText.includes('"') || cellText.includes('\n')) {
+        return `"${cellText}"`;
       }
-      return cell;
-    }).join(",");
-  }).join("\n");
+      return cellText;
+    }).join(',')
+  ).join('\n');
 }
