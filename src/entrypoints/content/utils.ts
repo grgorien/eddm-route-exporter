@@ -71,3 +71,44 @@ export function convertToCSV(data: string[][]): string {
     }).join(',')
   ).join('\n');
 }
+
+export function normalizeRouteInput(rawData: string): string[] {
+  const regex = /(\d{5})?[\s-]*([a-zA-Z])[\s-]*(\d{3})/g;
+  const matches = [...rawData.matchAll(regex)];
+  console.log(matches);
+  const cleanRoutes = matches.map(r => {
+    const zip = r[1] || "";
+    const type = r[2].toUpperCase();
+    const id = r[3];
+    return `${zip}${type}${id}`;
+  })
+  console.log(cleanRoutes);
+  return [...new Set(cleanRoutes)];
+}
+
+export function autoSelectRoutes(routeList: string[]) {
+  let foundCount = 0;
+  let checkedCount = 0;
+  routeList.forEach(route => {
+    const isFullID = /^\d/.test(route);
+    console.log(isFullID);
+    console.log(route);
+    const checkbox = document.querySelector<HTMLInputElement>(`input.routeChex[data-route-info="${route}"]`);
+    console.log(checkbox);
+    if (checkbox) {
+      console.log(checkbox);
+      foundCount++;
+      if (!checkbox.checked) {
+        checkbox.checked = true;
+        checkedCount++;
+        checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    }
+  });
+
+  return {
+    found: foundCount,
+    newlyChecked: checkedCount,
+    alreadyChecked: foundCount - checkedCount
+  };
+}
