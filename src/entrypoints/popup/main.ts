@@ -1,93 +1,142 @@
 import './style.css';
 import eagleIcon from "/icon/128.png";
-
+import { Request, Response, ExportSetting, ThemePreference } from '@/types';
+import { convertToCSV } from '../content/utils';
 document.querySelector<HTMLDivElement>('#main')!.innerHTML = `
 <div class="popup-content">
   <div class="header">
-      <img src="${eagleIcon}" class="logo" alt="logo" />
-      <h1>USPS Every Door Direct Mail Route Exporter</h1>
+    <img src="${eagleIcon}" class="logo" alt="logo" />
+    <h1>USPS Every Door Direct Mail Route Exporter</h1>
+  </div>
+  <div class="group-action">
+    <h2>Copy</h2>
+    <div class="button-grid">
+      <button id="copySelectedBtn" class="btn">Copy Selected Routes</button>
+      <button id="copyAllBtn" class="btn">Copy All Routes</button>
     </div>
-      <div class="group-action">
-        <h2>Copy</h2>
-        <div class="button-grid">
-          <button id="copySelectedBtn" class="btn">Copy Selected Routes</button>
-          <button id="copyAllBtn" class="btn">Copy All Routes</button>
-        </div>
-      </div>
+  </div>
 
-      <div class="group-action">
-        <h2>Export</h2>
-        <div class="button-grid">
-          <button id="exportSelectedBtn" class="btn">Export Selected Routes to CSV</button>
-          <button id="exportAllBtn" class="btn">Export All Routes to CSV</button>
-        </div>
-      </div>
+  <div class="group-action">
+    <h2>Export</h2>
+    <div class="button-grid">
+      <button id="exportSelectedBtn" class="btn">Export Selected Routes to CSV</button>
+      <button id="exportAllBtn" class="btn">Export All Routes to CSV</button>
+    </div>
+  </div>
 
-      <div class="auto-select-box">
-        <div class="auto-select-action">
-          <div class="auto-select-content-box">
-            <div class="auto-select-content">
-              <h2>Bulk Route Selection:</h2>
-              <span>Paste your route list below. The tool will find and check them automatically.</span>
-            </div>
-            <button class="btn">Start</button>
-          </div>
+  <div class="auto-select-box">
+    <div class="auto-select-action">
+      <div class="auto-select-content-box">
+        <div class="auto-select-content">
+          <h2>Bulk Route Selection:</h2>
+          <span>Paste your route list below. The tool will find and check them automatically.</span>
         </div>
-        <textarea placeholder="Paste route list here..." class="auto-select" row="12"></textarea>
-      </div>
-
-      <div class="status-box">
-        <h2>Output:</h2>
-        <p id="status" class="status-message"></p>
+        <button class="btn">Start</button>
       </div>
     </div>
+    <textarea placeholder="Paste route list here..." class="auto-select" row="12"></textarea>
+  </div>
 
-    <div id="theme-handler">
-      <div class="theme-user-preference">
-        <label> Theme:
-          <select data-theme-options name="theme-preference">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
-      </div>
-    </div>
-  `;
+  <div class="status-box">
+    <h2>Output:</h2>
+    <p id="status" class="status-message"></p>
+  </div>
+</div>
 
-type ThemePreference = {
-  "theme-preference": string
+<div id="theme-handler">
+  <div class="theme-user-preference">
+    <label> Theme:
+      <select data-theme-options name="theme-preference">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+  </div>
+</div>
+`;
+
+async function loadTheme() {
+  const themeSelect = document.querySelector<HTMLSelectElement>("[data-theme-options]");
+  const stored = await browser.storage.sync.get(["theme-preference"]);
+  console.log(stored);
+  if (stored["theme-preference"]) {
+    themeSelect!.value = stored["theme-preference"];
+  }
+  themeSelect?.addEventListener("change", async (e) => {
+    const value = (e.target as HTMLSelectElement).value;
+    await browser.storage.sync.set({ "theme-preference": value });
+  })
 }
 
-async function loadThemePreference(): Promise<ThemePreference> {
-  return await browser.storage.sync.get(["theme-preference"]);
+const statusMessageClient = document.querySelector<HTMLParagraphElement>("#status");
+function updateClientMessageStatus(message: string, type: "info" | "error" | "success" = "info") {
+  statusMessageClient!.textContent = message;
 }
 
-let themeOptions = {};
-const themePreferenceOptions = document.querySelector<HTMLSelectElement>("[data-theme-options]");
-themePreferenceOptions?.addEventListener("change", async (event: Event) => {
-  themeOptions = { "theme-preference": (event.target as HTMLOptionElement).value }
-  await browser.storage.sync.set(themeOptions);
-})
+async function handleProcess(setting: ExportSetting, action: "COPY" | "DOWNLOAD") {
+  try {
+    updateClientMessageStatus("Trying to connect to USPS page...");
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const activeTabID = tabs[0].id;
+    if (!activeTabID) {
+      throw new Error("No active tab found.");
+    }
+    const message: Request = { action: "SCRAPE", setting };
+    updateClientMessageStatus("Scanning USPS audience table.");
+    const response = await browser.tabs.sendMessage(activeTabID, message) as Response;
 
-var statusMsg:HTMLElement | null = document.querySelector("#status");
-statusMsg!.innerHTML = "Ready to export, copy, or check routes.";
+    if (!response.success || !response.data) {
+      throw new Error(response.error || "Unknown error from this page.");
+    }
+
+    const data = response.data;
+    updateClientMessageStatus(`Processing ${data.length} rows...`);
 
 
-var copySelectedBtn = document.querySelector<HTMLButtonElement>("#copySelectedBtn");
-const modes = {
-  copySelectedRoutes: "copySelectedRoutes",
-  copyAllRoutes: "copyAllRoutes",
-  exportSelectedRoutes: "exportSelectedRoutes",
-  exportAllRoutes: "exportAllRoutes"
+    const csvString = convertToCSV(data);
+    if (action === "COPY") {
+      await navigator.clipboard.writeText(csvString);
+      updateClientMessageStatus(`Copied ${data.length} rows to clipboard.`, "success");
+    } else {
+      downloadFile(csvString, setting);
+      updateClientMessageStatus(`Downloaded ${data.length} rows.`, "success");
+    }
+  } catch (err: any) {
+    console.log(err);
+    if (err.message.includes("Receiving end does not exist")) {
+      updateClientMessageStatus("Error: Refresh the USPS page and try again.", "error");
+    } else {
+      updateClientMessageStatus(`Error: ${err.message}`, "error");
+    }
+  }
 }
-copySelectedBtn?.addEventListener("click", () => {
-  browser.runtime.sendMessage({data: modes.exportSelectedRoutes });
-})
 
+function downloadFile(content: string, setting: string) {
+  const date = new Date().toISOString().slice(0, 10);
+  const filename =  `eddm_export_${setting}_${date}.csv`;
+  const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+const settingModes = {
+  copySelectedRoutes: "copySelectedBtn",
+  copyAllRoutes: "copyAllBtn",
+  exportSelectedRoutes: "exportSelectedBtn",
+  exportAllRoutes: "exportAllBtn"
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadThemePreference().then(option => {
-    themePreferenceOptions!.value = option["theme-preference"];
-  });
-})
+  loadTheme();
+  updateClientMessageStatus("Ready to export or copy routes...");
+  document.querySelector(`#${settingModes.copySelectedRoutes}`)?.addEventListener("click", () => handleProcess("SELECTED", "COPY"));
+  document.querySelector(`#${settingModes.copyAllRoutes}`)?.addEventListener("click", () => handleProcess("ALL", "COPY"));
+  document.querySelector(`#${settingModes.exportSelectedRoutes}`)?.addEventListener("click", () => handleProcess("SELECTED", "DOWNLOAD"));
+  document.querySelector(`#${settingModes.exportAllRoutes}`)?.addEventListener("click", () => handleProcess("ALL", "DOWNLOAD"));
+});
