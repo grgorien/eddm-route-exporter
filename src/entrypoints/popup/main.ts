@@ -1,11 +1,9 @@
 import './style.css';
-import eagleIcon from "/icon/128.png";
-import { Request, Response, ExportSetting, ThemePreference } from '@/types';
+import { Request, Response, ExportSetting, AutoSelectRequest } from '@/types';
 import { convertToCSV } from '../content/utils';
 document.querySelector<HTMLDivElement>('#main')!.innerHTML = `
 <div class="popup-content">
   <div class="header">
-    <img src="${eagleIcon}" class="logo" alt="logo" />
     <h1>USPS Every Door Direct Mail Route Exporter</h1>
   </div>
   <div class="group-action">
@@ -31,10 +29,10 @@ document.querySelector<HTMLDivElement>('#main')!.innerHTML = `
           <h2>Bulk Route Selection:</h2>
           <span>Paste your route list below. The tool will find and check them automatically.</span>
         </div>
-        <button class="btn">Start</button>
+        <button id="autoSelectBtn" class="btn">Start</button>
       </div>
     </div>
-    <textarea placeholder="Paste route list here..." class="auto-select" row="12"></textarea>
+    <textarea id="autoSelectTextarea" placeholder="Paste route list here..." class="auto-select" row="12"></textarea>
   </div>
 
   <div class="status-box">
@@ -59,7 +57,6 @@ document.querySelector<HTMLDivElement>('#main')!.innerHTML = `
 async function loadTheme() {
   const themeSelect = document.querySelector<HTMLSelectElement>("[data-theme-options]");
   const stored = await browser.storage.sync.get(["theme-preference"]);
-  console.log(stored);
   if (stored["theme-preference"]) {
     themeSelect!.value = stored["theme-preference"];
   }
@@ -132,6 +129,8 @@ const settingModes = {
   exportAllRoutes: "exportAllBtn"
 }
 
+const autoSelectBtn = document.querySelector<HTMLButtonElement>("#autoSelectBtn");
+const autoSelectTextarea = document.querySelector<HTMLTextAreaElement>("#autoSelectTextarea");
 document.addEventListener("DOMContentLoaded", () => {
   loadTheme();
   updateClientMessageStatus("Ready to export or copy routes...");
@@ -139,4 +138,39 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector(`#${settingModes.copyAllRoutes}`)?.addEventListener("click", () => handleProcess("ALL", "COPY"));
   document.querySelector(`#${settingModes.exportSelectedRoutes}`)?.addEventListener("click", () => handleProcess("SELECTED", "DOWNLOAD"));
   document.querySelector(`#${settingModes.exportAllRoutes}`)?.addEventListener("click", () => handleProcess("ALL", "DOWNLOAD"));
+
+  autoSelectBtn?.addEventListener("click", async () => {
+    const rawText = autoSelectTextarea?.value;
+    console.log(rawText);
+    if (!rawText || !rawText.trim()) {
+      updateClientMessageStatus("Please paste a list of routes first.", "error");
+      return;
+    }
+
+    try {
+      updateClientMessageStatus("Processing route list...");
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      const activeTabID = tabs[0].id;
+      if (!activeTabID) {
+        throw new Error("No active tab.");
+      }
+
+      const message: AutoSelectRequest = {
+        action: "AUTO_SELECT",
+        routes: rawText
+      };
+      const response = await browser.tabs.sendMessage(activeTabID, message) as Response;
+      console.log(response);
+      if (response.stats) {
+        const { found, newlyChecked, alreadyChecked } = response.stats;
+        updateClientMessageStatus(
+          `Done. Found ${found} routes. Checked ${newlyChecked} new. (${alreadyChecked} were already set).`, "success"
+        );
+      }
+
+    } catch (err: any) {
+      console.error(err);
+      updateClientMessageStatus(`Error: ${err.message}`, "error");
+    }
+  });
 });
