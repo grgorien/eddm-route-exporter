@@ -41,7 +41,7 @@ You can:
 - **Export to CSV:** Download route data for spreadsheets.
 - **Copy to Clipboard:** Paste data directly into emails or docs.
 - **Flexible Selection:** Work with all routes on the map or just specific ones you've clicked.
-- **Batch Work:** Quickly gather data across multiple ZIP codes without refreshing.
+- **Bulk Checkbox Selection:** Quickly check routes and save time.
 
 ---
 
@@ -74,7 +74,7 @@ The popup appears directly on the EDDM site. It is designed to be simple, fast, 
 - Export Selected Routes (CSV)
 - Export All Routes (CSV)
 
-### Route ID auto-selection
+### Bulk Route ID auto-selection
 Paste a list of USPS route IDs into the extension to automatically select them on the map.
 
 This is useful when:
