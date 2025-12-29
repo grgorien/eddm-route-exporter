@@ -88,16 +88,17 @@ async function handleProcess(setting: ExportSetting, action: "COPY" | "DOWNLOAD"
     }
 
     const data = response.data;
-    updateClientMessageStatus(`Processing ${data.length} rows...`);
+    const humandDataRows = data.length - 1;
+    updateClientMessageStatus(`Processing ${humandDataRows} rows...`);
 
 
     const csvString = convertToCSV(data);
     if (action === "COPY") {
       await navigator.clipboard.writeText(csvString);
-      updateClientMessageStatus(`Copied ${data.length} rows to clipboard.`, "success");
+      updateClientMessageStatus(`Copied ${humandDataRows} rows to clipboard.`, "success");
     } else {
       downloadFile(csvString, setting);
-      updateClientMessageStatus(`Downloaded ${data.length} rows.`, "success");
+      updateClientMessageStatus(`Downloaded ${humandDataRows} rows.`, "success");
     }
   } catch (err: any) {
     console.log(err);
@@ -141,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   autoSelectBtn?.addEventListener("click", async () => {
     const rawText = autoSelectTextarea?.value;
-    console.log(rawText);
     if (!rawText || !rawText.trim()) {
       updateClientMessageStatus("Please paste a list of routes first.", "error");
       return;
@@ -160,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
         routes: rawText
       };
       const response = await browser.tabs.sendMessage(activeTabID, message) as Response;
-      console.log(response);
       if (response.stats) {
         const { found, newlyChecked, alreadyChecked } = response.stats;
         updateClientMessageStatus(
