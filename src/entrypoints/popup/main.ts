@@ -98,7 +98,9 @@ async function handleProcess(setting: ExportSetting, action: "COPY" | "DOWNLOAD"
       updateClientMessageStatus(`Copied ${humandDataRows} rows to clipboard.`, "success");
     } else {
       downloadFile(csvString, setting);
-      updateClientMessageStatus(`Downloaded ${humandDataRows} rows.`, "success");
+      const date = new Date().toISOString().slice(0, 10);
+      const filename = `eddm_export_${setting}_${date}.csv`;
+      updateClientMessageStatus(`Downloaded ${filename} successfully.`, "success");
     }
   } catch (err: any) {
     console.log(err);
