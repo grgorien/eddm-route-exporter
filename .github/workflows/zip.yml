@@ -1,11 +1,12 @@
-name: Build and zip extension for a GitHub Release
+name: Build and zip extension
 
 on:
-  release:
-    types: [created]
-
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,25 +23,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build extension
-        run: npm run build
-
-      - name: Check for manifest.json
+      - name: Get version from root package.json
+        id: get_version
         run: |
-          if [! -f dist/chrome-mv3/manifest.json ]; then
-            echo "Build failed: dist/chrome-mv3 not found."
-            exit 1
-          fi
-
-      - name: Get version from manifest.json then store as Github env
-        run: |
-          VERSION=$(jq -r ".version" dist/chrome-mv3/manifest.json)
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: wxt ZIP extension with version
+      - name: Build and zip
         run: npm run zip
 
-      - name: Upload zip to release
+      - name: Upload new release
         uses: softprops/action-gh-release@v2
         with:
-          files: export-usps-eddm-routes-${{ env.VERSION }}-chrome.zip
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            dist/*-chrome.zip
