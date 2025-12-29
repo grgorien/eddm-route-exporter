@@ -2,7 +2,7 @@
   "name": "Export USPS EDDM® Routes",
   "description": "Export USPS EDDM® routes into a .csv file or quickly copy routes directly into your system's clipboard.",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "wxt",
