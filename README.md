@@ -5,7 +5,7 @@
        alt="EDDM Route Exporter extension icon" />
 </p>
 
-# USPS EDDM® Route Exporter
+# Route Exporter for USPS EDDM®
 
 Export USPS Every Door Direct Mail (EDDM®) route data directly from `eddm.usps.com` into CSV files or your clipboard.
 

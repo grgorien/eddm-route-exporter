@@ -2,10 +2,7 @@ import { defineConfig } from 'wxt';
 
 export default defineConfig({
   manifest: {
-    action: {
-      default_title: "Export USPS EDDM® routes into a .csv file or quickly copy routes directly into your system's clipboard."
-    },
-    permissions: ["storage"],
+    permissions: ["storage", "activeTab"],
     commands: {
       "_execute_action": {
         suggested_key: {
