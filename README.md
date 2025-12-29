@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/grgorien/eddm-route-exporter/refs/heads/elit/media/eddm-exporter-extension-icon-0.2.0.png"
+  <img src="media/eagle-icon-v0.2.2.png"
        width="98"
        height="98"
        alt="EDDM Route Exporter extension icon" />
