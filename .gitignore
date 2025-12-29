@@ -6,6 +6,7 @@
 !/package-lock.json
 !/manifest.json
 !/README.md
+!/POLICY.md
 !/src/
 
 # allow for only these extensions
