@@ -1,6 +1,6 @@
 {
-  "name": "Export USPS EDDM® Routes",
-  "description": "Export USPS EDDM® routes into a .csv file or quickly copy routes directly into your system's clipboard.",
+  "name": "Route Exporter for USPS EDDM®",
+  "description": "Tool to export USPS EDDM® route data to CSV or Clipboard. Save time planning campaigns with bulk selection.",
   "private": true,
   "version": "0.2.2",
   "type": "module",
