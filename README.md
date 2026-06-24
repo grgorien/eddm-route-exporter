@@ -7,7 +7,9 @@
 
 # Route Exporter for USPS EDDM®
 
-Export USPS Every Door Direct Mail (EDDM®) route data directly from `eddm.usps.com` into CSV files or your clipboard.
+**The fastest way to extract, copy, and compare USPS EDDM® route data without the manual clicking.**
+
+Stop manually copying household counts and clicking individual rows on the USPS map. This tool extracts complete route data directly from eddm.usps.com into ready-to-use CSV files or your clipboard in seconds.
 
 <p align="left">
   <a href="https://chromewebstore.google.com/detail/export-usps-eddm%C2%AE-routes/kofcpiffckfbmgilgclcipcifialknln">
@@ -21,75 +23,62 @@ Export USPS Every Door Direct Mail (EDDM®) route data directly from `eddm.usps.
 
 ## Who this is for
 
-This extension is built for people who actively run USPS EDDM® campaigns and need route data quickly and repeatedly.
+This extension is built for high-volume mailers who need to pull accurate route data quickly and repeatedly. It is a perfect fit if you are:
 
-It’s a good fit if you are:
-- A local marketer managing EDDM campaigns for clients
-- A print shop or mail house preparing route lists
-- A local business owner running your own mailers
-- Comparing routes across multiple ZIP codes
+* **Local Marketers & Agencies** managing campaigns and building quotes for clients.
+* **Print Shops & Mail Houses** preparing route lists and estimating postage costs.
+* **Local Business Owners** running targeted local mail drops.
+* **Media Buyers** comparing counts across dozens of ZIP codes simultaneously.
 
-Most users need to collect route data from many ZIP codes to build intuition around household counts and estimated costs. This tool removes the manual steps so you can focus on the decision making.
-
----
-
-## What this does
-
-This extension removes repetitive work from the USPS EDDM website.
-
-You can:
-- **Export to CSV:** Download route data for spreadsheets.
-- **Copy to Clipboard:** Paste data directly into emails or docs.
-- **Flexible Selection:** Work with all routes on the map or just specific ones you've clicked.
-- **Bulk Checkbox Selection:** Quickly check routes and save time.
+> **The Problem:** The official USPS tool is powerful for mapping but tedious for data collection. Building an intuition for household counts and campaign costs usually requires hundreds of manual clicks. This tool eliminates the friction so you can focus on strategy.
 
 ---
 
-## Quick preview
+## Core Features
+
+### One-Click Export & Copy
+
+* **Export All or Selected Routes (CSV):** Download clean, formatted route data straight to a spreadsheet.
+* **Copy to Clipboard:** Instantly paste data directly into your own spreadsheets, estimates, or client emails.
+* **Flexible Mapping:** Pull data for an entire ZIP code instantly, or only the specific routes you’ve highlighted.
+
+### Bulk Route ID Auto-Selection
+
+Already know which routes you want? Paste a comma-separated list of your target USPS Route IDs directly into the extension, and it will **automatically check and highlight them on the map** for you.
+
+* *Perfect for:* Rebuilding last year's campaigns, verifying known routes, or bypassing the map entirely on massive lists.
+
+### Premium Dark & Light Themes
+
+Built to look seamless no matter how you work. The extension automatically detects your system preferences for a native feel, but allows you to lock in Dark Mode or Light Mode manually. Your visual preference automatically saves to your active profile, instantly syncing across all of your workstations.
+
+---
+
+## Visual Preview
 
 <img src="media/popup-ui.png" alt="EDDM Route Exporter Chrome extension popup" width="360" />
 
-The popup appears directly on the EDDM site. It is designed to be simple, fast, and stays out of your way until you need it.
+The popup overlay loads directly on top of the official EDDM site. It is designed to be ultra-lightweight, fast, and stays entirely out of your way until the moment you need to move data.
 
 ---
 
 ## How to use
 
-1. Visit [eddm.usps.com](https://eddm.usps.com).
-2. Search for routes by ZIP code.
-   > **Tip:** You can search multiple ZIP codes by separating them with commas:
-   > `12345, 12346, 12347`
-3. Use the standard USPS filters as needed:
-   - **Map → Residential:** Toggle between "Residential & Business" or "Residential Only".
-   - **Map → Route:** Filter by City, Rural/Highway, or PO Box.
-4. Click the extension icon to copy or export your data.
+1. Go to [eddm.usps.com](https://eddm.usps.com).
+2. Search for your target routes by ZIP code.
+    * *Tip:* You can search multiple ZIP codes at once by separating them with commas (e.g., `12345, 12346, 12347`).
+3. Apply your standard USPS filters (e.g., *Residential Only*, *City vs. Rural*).
+4. Open the extension popup to instantly copy or export your data.
 
 ---
 
-## Features
+## For Developers & Contributors
 
-### Export and copy options
-- Copy Selected Routes
-- Copy All Routes
-- Export Selected Routes (CSV)
-- Export All Routes (CSV)
+This project is 100% open-source under the MIT License. Contributions, bug reports, and feature requests are highly welcome.
 
-### Bulk Route ID auto-selection
-Paste a list of USPS route IDs into the extension to automatically select them on the map.
+### Local Development
 
-This is useful when:
-- Rebuilding previous campaigns
-- Re-checking known routes
-- Avoiding repetitive clicking on large route lists
-
-### Faster route comparison
-By exporting route data quickly, you can compare household counts and estimate campaign costs without clicking through individual table rows.
-
-### Theme preferences
-The extension matches your system theme by default. If you change it, your preference saves to your Chrome profile and follows you to other computers. If you aren't signed in, it saves locally to your current browser.
-
----
-
-## Open source
-
-This project is open source. Contributions, bug reports, and feature requests are welcome.
+1. Clone this repository.
+2. Open Chrome and navigate to `chrome://extensions/`.
+3. Enable **Developer mode** (top-right toggle).
+4. Click **Load unpacked** and select the project directory.
